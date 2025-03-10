@@ -5,7 +5,7 @@ A Flutter application for secure key generation and management with advanced enc
 ## App Preview
 
 <div align="center">
-  <img src="assets/images/auth.jpeg" alt="Authorization App Interface" width="300"/>
+  <img src="auth.jpeg" alt="Authorization App Interface" width="300"/>
   <p><em>Key Generation</em></p>
 </div>
 
