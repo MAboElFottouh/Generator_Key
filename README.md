@@ -2,6 +2,13 @@
 
 A Flutter application for secure key generation and management with advanced encryption features.
 
+## App Preview
+
+<div align="center">
+  <img src="assets/images/auth.jpeg" alt="Authorization App Interface" width="300"/>
+  <p><em>Key Generation</em></p>
+</div>
+
 ## Features
 
 - Secure key generation and storage
@@ -148,11 +155,4 @@ For support, please open an issue in the GitHub repository or contact the develo
   - Permission handling
   - Encryption implementation
 
-## Future Improvements
-
-- [ ] Implement biometric authentication
-- [ ] Add cloud backup support
-- [ ] Enhance recovery mechanisms
-- [ ] Add multi-language support
-- [ ] Implement dark mode
 ```

@@ -82,7 +82,7 @@ class _PermissionPageState extends State<PermissionPage> {
 
         final androidVersion = await getAndroidVersion();
         if (androidVersion == 0) {
-          throw 'حدث خطأ في التعرف على إصدار النظام';
+          throw 'Error detecting system version';
         }
 
         int attempts = 0;
@@ -91,7 +91,7 @@ class _PermissionPageState extends State<PermissionPage> {
           if (granted) break;
           attempts++;
           if (attempts == 3) {
-            throw 'لم يتم منح الصلاحيات المطلوبة';
+            throw 'Required permissions not granted';
           }
           await Future.delayed(const Duration(seconds: 1));
         }
@@ -134,7 +134,7 @@ class _PermissionPageState extends State<PermissionPage> {
         return status.isGranted;
       }
     } catch (e) {
-      print('خطأ في طلب الصلاحيات: $e');
+      print('Error requesting permissions: $e');
       return false;
     }
   }
@@ -144,9 +144,9 @@ class _PermissionPageState extends State<PermissionPage> {
     final file = File('${directory.path}/.ATH.enc');
 
     if (!await file.exists()) {
-      await Logger.log('تم اكتشاف فقدان الملف');
+      await Logger.log('File loss detected');
       if (mounted) {
-        showError(context, 'تم اكتشاف مشكلة في ملف المفتاح');
+        showError(context, 'Key file issue detected');
       }
     }
   }
@@ -166,12 +166,12 @@ class _PermissionPageState extends State<PermissionPage> {
                   CircularProgressIndicator(),
                   SizedBox(height: 20),
                   Text(
-                    'جاري التحقق من الصلاحيات...',
+                    'Checking permissions...',
                     style: TextStyle(fontSize: 16),
                   ),
                 ],
               )
-            : const SizedBox(), // لن يتم عرض هذا أبداً لأن التطبيق سيغلق إذا تم رفض الإذن
+            : const SizedBox(), // This will never be displayed because the app will close if permissions are denied
       ),
     );
   }
@@ -185,18 +185,14 @@ Future<String> getOrCreateKey() async {
       // أقل من Android 13
       var status = await Permission.storage.status;
       if (!status.isGranted) {
-        throw 'يرجى منح التطبيق صلاحية';
+        throw 'Please grant app permissions';
       }
     } else if (androidVersion == 33) {
       // Android 13 تحديداً
       var mediaStatus = await Permission.photos.status;
       var storageStatus = await Permission.storage.status;
       if (!mediaStatus.isGranted || !storageStatus.isGranted) {
-        mediaStatus = await Permission.photos.request();
-        storageStatus = await Permission.storage.request();
-        if (!mediaStatus.isGranted || !storageStatus.isGranted) {
-          throw 'يجب السماح بصلاحيات لاستخدام التطبيق';
-        }
+        throw 'Permissions required to use the app';
       }
     } else {
       // Android 14 وما فوق
@@ -248,7 +244,7 @@ Future<String> handleKeyFile(Directory directory) async {
       return key;
     }
   } catch (e) {
-    throw 'حدث خطأ في معالجة الملف: $e';
+    throw 'Error processing file: $e';
   }
 }
 
@@ -280,7 +276,7 @@ Future<void> encryptAndSaveKey(String key, File file) async {
     await tempFile.writeAsString(json.encode(data));
     await tempFile.rename(file.path);
   } catch (e) {
-    throw 'حدث خطأ في تشفير المفتاح: $e';
+    throw 'Error encrypting key: $e';
   }
 }
 
@@ -301,7 +297,7 @@ Future<void> backupKey(String key, Directory directory) async {
     final backupFile = File('${directory.path}/.ATH.backup');
     await encryptAndSaveKey(key, backupFile);
   } catch (e) {
-    print('فشل إنشاء النسخة الاحتياطية: $e');
+    print('Failed to create backup: $e');
   }
 }
 
@@ -315,7 +311,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('مفتاح التفعيل'),
+        title: const Text('Activation Key'),
       ),
       body: Center(
         child: Padding(
@@ -332,7 +328,7 @@ class HomePage extends StatelessWidget {
                   child: Column(
                     children: [
                       const Text(
-                        'مفتاح التفعيل الخاص بك:',
+                        'Your Activation Key:',
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 16),
                       ),
@@ -364,14 +360,14 @@ class HomePage extends StatelessWidget {
                     Clipboard.setData(ClipboardData(text: authKey));
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('تم نسخ المفتاح بنجاح'),
+                        content: Text('Key copied successfully'),
                         behavior: SnackBarBehavior.floating,
                         duration: Duration(seconds: 1),
                       ),
                     );
                   },
                   icon: const Icon(Icons.copy),
-                  label: const Text('نسخ المفتاح'),
+                  label: const Text('Copy Key'),
                 ),
               ),
             ],
@@ -428,7 +424,7 @@ Future<T> retryOperation<T>(Future<T> Function() operation,
       await Future.delayed(Duration(seconds: 1));
     }
   }
-  throw 'فشلت العملية بعد $maxAttempts محاولات';
+  throw 'Operation failed after $maxAttempts attempts';
 }
 
 Future<void> secureKey(String key, Directory directory) async {
@@ -516,7 +512,7 @@ void showError(BuildContext context, String message) {
     context: context,
     barrierDismissible: false,
     builder: (context) => AlertDialog(
-      title: const Text('خطأ'),
+      title: const Text('Error'),
       content: Text(message),
       actions: [
         TextButton(
@@ -524,7 +520,7 @@ void showError(BuildContext context, String message) {
             Navigator.pop(context);
             SystemNavigator.pop();
           },
-          child: const Text('إغلاق'),
+          child: const Text('Close'),
         ),
       ],
     ),
