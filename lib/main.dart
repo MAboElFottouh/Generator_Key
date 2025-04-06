@@ -392,7 +392,7 @@ bool isValidKey(String key) {
 String _generateKey() {
   final random = Random.secure();
   final chars =
-      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#\$%^&*()';
+      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#%^&*()';
   return List.generate(12, (index) => chars[random.nextInt(chars.length)])
       .join();
 }
